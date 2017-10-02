@@ -63,6 +63,7 @@ system/cache/
 system/logs/
 
 system/storage/
+temp/
 
 # vQmod log files
 vqmod/logs/*

@@ -494,6 +494,8 @@ class ControllerProductCategory extends Controller {
                 }
             }
 
+            $data['breadcrumbs'] = $this->load->view('default/template/common/breadcrumbs.tpl', $data);
+
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/product/category.tpl')) {
 				$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/product/category.tpl', $data));
 			} else {
@@ -593,6 +595,9 @@ class ControllerProductCategory extends Controller {
                     ), $mfReplace ? $mfFind . $mfReplace : '', $mfBreadcrumb['href'] );
                 }
             }
+
+
+            $data['breadcrumbs'] = $this->load->view('default/template/common/breadcrumbs.tpl', $data);
 
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/error/not_found.tpl')) {
 				$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/error/not_found.tpl', $data));

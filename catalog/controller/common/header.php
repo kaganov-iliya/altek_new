@@ -1,6 +1,29 @@
 <?php
 class ControllerCommonHeader extends Controller {
 	public function index() {
+
+        $this->document->addStyle('catalog/view/theme/default/stylesheet/bootstrap.min.css');
+        $this->document->addStyle('catalog/view/theme/default/stylesheet/font-awesome.min.css');
+        $this->document->addStyle('catalog/view/theme/default/stylesheet/media.css');
+        $this->document->addStyle('catalog/view/theme/default/stylesheet/fonts.css');
+        $this->document->addStyle('catalog/view/theme/default/stylesheet/stylesheet.css');
+        $this->document->addStyle('catalog/view/theme/default/stylesheet/style.css');
+        $this->document->addStyle('catalog/view/theme/default/stylesheet/custom.css');
+
+        $this->document->addStyle('catalog/view/javascript/bxslider/jquery.bxslider.min.css');
+        $this->document->addStyle('catalog/view/javascript/owl-carousel/owl.carousel.min.css');
+        $this->document->addStyle('catalog/view/javascript/magnific/magnific-popup.css');
+
+        $this->document->addScript('catalog/view/javascript/plugin/jquery.maskedinput.js');
+        $this->document->addScript('catalog/view/javascript/plugin/jquery.validate.min.js');
+        $this->document->addScript('catalog/view/javascript/magnific/jquery.magnific-popup.min.js');
+        $this->document->addScript('catalog/view/javascript/StartPlugin.js');
+
+        $this->document->addScript('catalog/view/javascript/bxslider/jquery.bxslider.min.js');
+        $this->document->addScript('catalog/view/javascript/owl-carousel/owl.carousel.min.js');
+        $this->document->addScript('catalog/view/javascript/loupe/jquery.loupe.min.js');
+        $this->document->addScript('catalog/view/javascript/common.js');
+
 		// Analytics
 		$this->load->model('extension/extension');
 

@@ -1,10 +1,26 @@
 <?php
 class ControllerCommonSeoPro extends Controller {
 	private $cache_data = null;
+    private $cache_data_mfp = null;
 
 	public function __construct($registry) {
 		parent::__construct($registry);
 		$this->cache_data = $this->cache->get('seo_pro');
+
+        $mfilterConfig = $this->config->get( 'mega_filter_seo' );
+
+        if( ! empty( $mfilterConfig['enabled'] ) ) {
+            $this->cache_data_mfp = $this->cache->get('seo_pro_mfp.'.$this->config->get('store_id'));
+
+            $mfilter_query = $this->db->query( "SELECT * FROM `" . DB_PREFIX . "mfilter_url_alias`");
+
+            foreach ($mfilter_query->rows as $row) {
+                $this->cache_data_mfp[mb_strtolower($row['alias'],'utf8')] = $row['mfp'];
+            }
+
+            $this->cache->set('seo_pro_mfp.'.$this->config->get('store_id'), $this->cache_data_mfp);
+        }
+
 		if (!$this->cache_data) {
 			$query = $this->db->query("SELECT LOWER(`keyword`) as 'keyword', `query` FROM " . DB_PREFIX . "url_alias ORDER BY url_alias_id");
 			$this->cache_data = array();
@@ -21,6 +37,8 @@ class ControllerCommonSeoPro extends Controller {
 	}
 
 	public function index() {
+
+        $mfilterConfig = $this->config->get( 'mega_filter_seo' );
 
 		// Add rewrite to url class
 		if ($this->config->get('config_seo_url')) {
@@ -40,7 +58,31 @@ class ControllerCommonSeoPro extends Controller {
 			array_push($parts, $last_part);
 
 			$rows = array();
-			foreach ($parts as $keyword) {
+            $mfp_parts = array();
+
+            foreach ($parts as $keyword) {
+                if( ! empty( $mfilterConfig['enabled'] ) ) {
+                    if( preg_match( '/^mfp,([a-z0-9\-_]+\[[^\]]*\],?)+/', $keyword, $matches ) ) {
+                        if( isset( $this->request->get['route'] ) ) {
+                            $this->request->get['route'] = preg_replace( '/\/?mfp,([a-z0-9\-_]+\[[^\]]*\],?)+/', '', $this->request->get['route'] );
+                        }
+
+                        if( isset( $this->request->get['_route_'] ) ) {
+                            $this->request->get['_route_'] = preg_replace( '/\/?mfp,([a-z0-9\-_]+\[[^\]]*\],?)+/', '', $this->request->get['_route_'] );
+                        }
+
+                        if( ! isset( $this->request->get['mfp'] ) ) {
+                            $this->request->get['mfp'] = preg_replace( '/^mfp,/', '', $matches[0] );
+                        }
+
+                        continue;
+                    } else {
+                        $mfp_parts[] = $keyword;
+                    }
+                } else {
+                    $mfp_parts[] = $keyword;
+                }
+
 				if (isset($this->cache_data['keywords'][$keyword])) {
 					$rows[] = array('keyword' => $keyword, 'query' => $this->cache_data['keywords'][$keyword]);
 				}
@@ -51,6 +93,15 @@ class ControllerCommonSeoPro extends Controller {
 				$parts = array($keyword);
 				$rows = array(array('keyword' => $keyword, 'query' => $this->cache_data['keywords'][$keyword]));
 			}
+
+            $parts = $mfp_parts;
+
+            foreach( $parts as $k => $part ) {
+                if( isset( $this->cache_data_mfp[$part] ) ) {
+                    $this->request->get['mfp'] = $this->cache_data_mfp[$part];
+                    $rows[] = array('keyword' => $part, 'query' => 'mfp='.$this->cache_data_mfp[$part]);
+                }
+            }
 
 			if (count($rows) == sizeof($parts)) {
 				$queries = array();
@@ -84,7 +135,23 @@ class ControllerCommonSeoPro extends Controller {
 					if ($path) $this->request->get['path'] = $path;
 				}
 			} elseif (isset($this->request->get['path'])) {
-				$this->request->get['route'] = 'product/category';
+                if( empty( $this->request->get['route'] ) || strpos( $this->request->get['route'], 'module/mega_filter' ) === false ) {
+                    if( isset( $queries[$parts[0]] ) && strpos( $queries[$parts[0]], '/' ) !== false ) {
+                        $this->request->get['route'] = $queries[$parts[0]];
+                    } else {
+                        if( ! empty( $this->request->get['mfp'] ) ) {
+                            preg_match( '/path\[([^]]*)\]/', $this->request->get['mfp'], $mf_matches );
+
+                            if( ! empty( $mf_matches[1] ) && isset( $this->request->get['manufacturer_id'] ) ) {
+                                $this->request->get['route'] = 'product/manufacturer/info';
+                            } else {
+                                $this->request->get['route'] = 'product/category';
+                            }
+                        } else {
+                            $this->request->get['route'] = 'product/category';
+                        }
+                    }
+                }
 			} elseif (isset($this->request->get['manufacturer_id'])) {
 				$this->request->get['route'] = 'product/manufacturer/info';
 			} elseif (isset($this->request->get['information_id'])) {
@@ -296,6 +363,15 @@ class ControllerCommonSeoPro extends Controller {
 	}
 
 	private function validate() {
+
+        if( isset( $this->request->get['route'] ) && strpos( $this->request->get['route'], 'module/mega_filter' ) !== false ) {
+            return;
+        }
+
+        if( isset( $this->request->get['mfp'] ) ) {
+            return;
+        }
+
 		if (isset($this->request->get['route']) && $this->request->get['route'] == 'error/not_found') {
 			return;
 		}
@@ -322,7 +398,7 @@ class ControllerCommonSeoPro extends Controller {
 			$seo = str_replace('&amp;', '&', $this->url->link($this->request->get['route'], $this->getQueryString(array('route')), false));
 		}
 
-		if (rawurldecode($url) != rawurldecode($seo)) {
+        if (rawurldecode($url) != rawurldecode($seo) && strpos($url,'mfp=')===false) {
 			header($this->request->server['SERVER_PROTOCOL'] . ' 301 Moved Permanently');
 
 			$this->response->redirect($seo);

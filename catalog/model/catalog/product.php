@@ -188,6 +188,16 @@ class ModelCatalogProduct extends Model {
 
 		$product_data = array();
 
+        if( in_array( __FUNCTION__, array( 'getProducts', 'getTotalProducts', 'getProductSpecials', 'getTotalProductSpecials' ) ) ) {
+            if( ! empty( $this->request->get['mfp'] ) || ( NULL != ( $mfSettings = $this->config->get('mega_filter_settings') ) && ! empty( $mfSettings['in_stock_default_selected'] ) ) ) {
+                if( empty( $data['mfp_disabled'] ) ) {
+                    $this->load->model( 'module/mega_filter' );
+
+                    $sql = MegaFilterCore::newInstance( $this, $sql, $data )->getSQL( __FUNCTION__ );
+                }
+            }
+        }
+
 		$query = $this->db->query($sql);
 
 		foreach ($query->rows as $result) {
@@ -237,6 +247,16 @@ class ModelCatalogProduct extends Model {
 		}
 
 		$product_data = array();
+
+        if( in_array( __FUNCTION__, array( 'getProducts', 'getTotalProducts', 'getProductSpecials', 'getTotalProductSpecials' ) ) ) {
+            if( ! empty( $this->request->get['mfp'] ) || ( NULL != ( $mfSettings = $this->config->get('mega_filter_settings') ) && ! empty( $mfSettings['in_stock_default_selected'] ) ) ) {
+                if( empty( $data['mfp_disabled'] ) ) {
+                    $this->load->model( 'module/mega_filter' );
+
+                    $sql = MegaFilterCore::newInstance( $this, $sql, $data )->getSQL( __FUNCTION__ );
+                }
+            }
+        }
 
 		$query = $this->db->query($sql);
 
@@ -487,6 +507,16 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
 
+        if( in_array( __FUNCTION__, array( 'getProducts', 'getTotalProducts', 'getProductSpecials', 'getTotalProductSpecials' ) ) ) {
+            if( ! empty( $this->request->get['mfp'] ) || ( NULL != ( $mfSettings = $this->config->get('mega_filter_settings') ) && ! empty( $mfSettings['in_stock_default_selected'] ) ) ) {
+                if( empty( $data['mfp_disabled'] ) ) {
+                    $this->load->model( 'module/mega_filter' );
+
+                    $sql = MegaFilterCore::newInstance( $this, $sql, $data )->getSQL( __FUNCTION__ );
+                }
+            }
+        }
+
 		$query = $this->db->query($sql);
 
 		return $query->row['total'];
@@ -501,7 +531,15 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function getTotalProductSpecials() {
-		$query = $this->db->query("SELECT COUNT(DISTINCT ps.product_id) AS total FROM " . DB_PREFIX . "product_special ps LEFT JOIN " . DB_PREFIX . "product p ON (ps.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW()))");
+        $sql = "SELECT COUNT(DISTINCT ps.product_id) AS total FROM " . DB_PREFIX . "product_special ps LEFT JOIN " . DB_PREFIX . "product p ON (ps.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND ps.customer_group_id = '" . (int)$customer_group_id . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW()))";
+
+        if( ! empty( $this->request->get['mfp'] ) || ( NULL != ( $mfSettings = $this->config->get('mega_filter_settings') ) && ! empty( $mfSettings['in_stock_default_selected'] ) ) ) {
+            $this->load->model( 'module/mega_filter' );
+
+            $sql = MegaFilterCore::newInstance( $this, $sql, $data )->getSQL( __FUNCTION__ );
+        }
+
+        $query = $this->db->query( $sql );
 
 		if (isset($query->row['total'])) {
 			return $query->row['total'];

@@ -121,7 +121,8 @@ class ControllerCommonHeader extends Controller {
 				foreach ($children as $child) {
 					$filter_data = array(
 						'filter_category_id'  => $child['category_id'],
-						'filter_sub_category' => true
+                        'filter_sub_category' => true,
+                        'mfp_disabled' => true
 					);
 
 					$children_data[] = array(

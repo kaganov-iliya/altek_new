@@ -1,10 +1,31 @@
 <?php echo $header; ?>
+    <div class="category-top-banner">
+        <img class="position-banner" src="images/category/banner-category.jpg" alt="Водонагреватели" title="Водонагреватели">
+        <div class="container">
+            <div class="position-banner-text">
+                <div class="title-category">
+                    <h1>Водонагреватели</h1>
+                </div>
+                <div class="desc-category">
+                    <h2>Nemo enim ipsam voluptatem quia<br>
+                        voluptas sit aspernatur</h2>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="breadcrumbs">
+        <div class="container">
+            <ul>
+                <?php foreach ($breadcrumbs as $breadcrumb) { ?>
+                    <li> <a href="<?php echo $breadcrumb['href']; ?>"> <?php echo $breadcrumb['text']; ?> </a> </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
 <div class="container">
-  <ul class="breadcrumb">
-    <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-    <li> <a href="<?php echo $breadcrumb['href']; ?>"> <?php echo $breadcrumb['text']; ?> </a> </li>
-    <?php } ?>
-  </ul>
   <div class="row"><?php echo $column_left; ?>
     <?php if ($column_left && $column_right) { ?>
     <?php $class = 'col-sm-6'; ?>

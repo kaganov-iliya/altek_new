@@ -278,6 +278,29 @@ class ControllerProductCategory extends Controller {
 					$rating = false;
 				}
 
+                $results_attributes = $this->model_catalog_product->getProductAttributes($result['product_id']);
+
+                $product_attributes = array();
+                if ($results_attributes) {
+                    foreach ($results_attributes as $attr_k => $attr_v) {
+                        if ($attr_v['attribute']) {
+                            foreach ($attr_v['attribute'] as $attr_k2 => $attr_v1) {
+                                if ($attr_v1['image']) {
+                                    $attr_image = $this->model_tool_image->resize($attr_v1['image'], 50, 50);
+                                } else {
+                                    $attr_image = $this->model_tool_image->resize('placeholder.png', 50, 50);
+                                }
+                                $product_attributes[] = [
+                                    'attribute_id' => $attr_v1['attribute_id'],
+                                    'name' => $attr_v1['name'],
+                                    'text' => $attr_v1['text'],
+                                    'image' => $attr_image
+                                ];
+                            }
+                        }
+                    }
+                }
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
@@ -286,6 +309,7 @@ class ControllerProductCategory extends Controller {
 					'price'       => $price,
 					'special'     => $special,
 					'tax'         => $tax,
+					'product_attributes'         => $product_attributes,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],
 					'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
@@ -447,6 +471,7 @@ class ControllerProductCategory extends Controller {
 
 			$data['continue'] = $this->url->link('common/home');
 
+            $data['search'] = $this->load->controller('common/search');
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
 			$data['content_top'] = $this->load->controller('common/content_top');

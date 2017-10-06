@@ -270,6 +270,7 @@ class ControllerCatalogAttribute extends Controller {
 		$data['entry_name'] = $this->language->get('entry_name');
 		$data['entry_attribute_group'] = $this->language->get('entry_attribute_group');
 		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
+        $data['entry_image'] = $this->language->get('entry_image');
 
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
@@ -329,6 +330,26 @@ class ControllerCatalogAttribute extends Controller {
 		if (isset($this->request->get['attribute_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
 			$attribute_info = $this->model_catalog_attribute->getAttribute($this->request->get['attribute_id']);
 		}
+
+        if (isset($this->request->post['image'])) {
+            $data['image'] = $this->request->post['image'];
+        } elseif (!empty($attribute_info)) {
+            $data['image'] = $attribute_info['image'];
+        } else {
+            $data['image'] = '';
+        }
+
+        $this->load->model('tool/image');
+
+        if (isset($this->request->post['image']) && is_file(DIR_IMAGE . $this->request->post['image'])) {
+            $data['thumb'] = $this->model_tool_image->resize($this->request->post['image'], 100, 100);
+        } elseif (!empty($attribute_info) && is_file(DIR_IMAGE . $attribute_info['image'])) {
+            $data['thumb'] = $this->model_tool_image->resize($attribute_info['image'], 100, 100);
+        } else {
+            $data['thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+        }
+
+        $data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
 
 		$this->load->model('localisation/language');
 

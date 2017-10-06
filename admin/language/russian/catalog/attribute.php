@@ -18,6 +18,7 @@ $_['column_action']          	= 'Действие';
 $_['entry_name']          		= 'Название:';
 $_['entry_attribute_group']     = 'Группа:';
 $_['entry_sort_order']          = 'Порядок сортировки:';
+$_['entry_image']          		= 'Изображение атрибута:';
 
 // Error
 $_['error_permission']          = 'У Вас нет прав для изменения атрибутов!';

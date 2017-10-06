@@ -185,10 +185,12 @@
 										</div>
 									<?php } else if( $filter['type'] == 'search' || $filter['type'] == 'search_oc' ) { ?>
 										<div class="mfilter-option mfilter-search<?php echo ! empty( $filter['button'] ) ? ' mfilter-search-button' : ''; ?>">
+                                            <div class="search-product-icon"></div>
 											<input
 												id="mfilter-opts-search"
 												type="text"
-												class="form-control"
+                                                placeholder="Поиск по товару или артикулу"
+												class="form-control search-product-filter"
 												data-refresh-delay="<?php echo isset( $filter['refresh_delay'] ) ? $filter['refresh_delay'] : '-1'; ?>"
 												value="<?php echo isset( $params['search'][0] ) ? $params['search'][0] : ( isset( $params['search_oc'][0] ) ? $params['search_oc'][0] : '' ); ?>"
 												/>
@@ -202,7 +204,10 @@
 										</div>
 									<?php } else if( $filter['type'] == 'price' ) { ?>
 										<div class="mfilter-option mfilter-price">
-											<div class="mfilter-price-inputs">
+                                            <div class="mfilter-price-slider">
+                                                <div id="mfilter-price-slider"></div>
+                                            </div>
+                                            <div class="mfilter-price-inputs">
 												<?php echo $getSymbolLeft; ?>
 												<input
 													id="mfilter-opts-price-min"
@@ -220,9 +225,6 @@
 													value="<?php echo isset( $params['price'][1] ) ? $params['price'][1] : ''; ?>"
 													/>
 													<?php echo $getSymbolRight; ?>
-											</div>
-											<div class="mfilter-price-slider">
-												<div id="mfilter-price-slider"></div>
 											</div>
 										</div>
 									<?php } else if( $filter['type'] == 'slider' ) { ?>
@@ -302,22 +304,22 @@
 											<?php $options_tmp = array(); ?>
 											<?php foreach( $filter['options'] as $option_id => $option ) { if( $option['name'] === '' || isset( $options_tmp[$option['key']] ) ) continue; $options_tmp[$option['key']] = true; ?>
 												<?php echo $_position == 'content_top' ? '<div class="mfilter-tb">' : ''; ?>
-												<div class="mfilter-option mfilter-tb-as-tr">
+												<div class="mfilter-option mfilter-tb-as-tr check-box-filter">
 													<div class="mfilter-tb-as-td mfilter-col-input">
 														<input 
-															id="mfilter-opts-attribs-<?php echo (int) $_idx; ?>-<?php echo $base_id; ?>-<?php echo $option['key']; ?>" 
+															id="mfilter-opts-attribs-<?php echo (int) $_idx; ?>-<?php echo $base_id; ?>-<?php echo $option['key']; ?>" class="check-box-filter"
 															name="<?php echo $filter['seo_name']; ?>"
 															type="<?php echo $_tmp_type == 'image_list_checkbox' ? 'checkbox' : ( $_tmp_type == 'image_list_radio' ? 'radio' : $_tmp_type ); ?>"
 															<?php echo ! empty( $params[$filter['seo_name']] ) && in_array( $option['value'], $params[$filter['seo_name']] ) ? ' checked="checked"' : ''; ?>
 															value="<?php echo str_replace( '"', '&quot;', $option['value'] ); ?>" />
+                                                        <label class="mfilter-tb-as-td" for="mfilter-opts-attribs-<?php echo (int) $_idx; ?>-<?php echo $base_id; ?>-<?php echo $option['key']; ?>">
+                                                            <?php if( in_array( $_tmp_type, array( 'image_list_radio', 'image_list_checkbox' ) ) ) { ?>
+                                                                <img src="<?php echo $option['image']; ?>" /> <?php echo $option['name']; ?>
+                                                            <?php } else { ?>
+                                                                <?php echo $option['name']; ?>
+                                                            <?php } ?>
+                                                        </label>
 													</div>
-													<label class="mfilter-tb-as-td" for="mfilter-opts-attribs-<?php echo (int) $_idx; ?>-<?php echo $base_id; ?>-<?php echo $option['key']; ?>">
-														<?php if( in_array( $_tmp_type, array( 'image_list_radio', 'image_list_checkbox' ) ) ) { ?>
-															<img src="<?php echo $option['image']; ?>" /> <?php echo $option['name']; ?>
-														<?php } else { ?>
-															<?php echo $option['name']; ?>
-														<?php } ?>
-													</label>
 													<div class="mfilter-tb-as-td mfilter-col-count"><span class="mfilter-counter">0</span></div>
 												</div>
 												<?php echo $_position == 'content_top' ? '</div>' : ''; ?>
@@ -325,8 +327,9 @@
 											</div>
 										</div>
 									<?php } else if( $filter['type'] == 'select' ) { ?>
-										<div class="mfilter-tb">
-											<div class="mfilter-option mfilter-select">
+										<div class="mfilter-tb options-filter">
+											<div class="mfilter-option mfilter-select select-filter-option">
+                                                <div class="select-arrow-3"></div>
 												<select>
 													<option value="">---</option>
 													<?php foreach( $filter['options'] as $option_id => $option ) { ?>
@@ -450,3 +453,4 @@
 		});
 	});
 </script>
+

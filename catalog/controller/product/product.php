@@ -208,11 +208,8 @@ class ControllerProductProduct extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+            $data['breadcrumbs'] = $this->load->view('default/template/common/breadcrumbs.tpl', $data);
 
-			$data['breadcrumbs'][] = array(
-				'text' => $product_info['name'],
-				'href' => $this->url->link('product/product', $url . '&product_id=' . $this->request->get['product_id'])
-			);
 
 			if ($product_info['meta_title']) {
 				$this->document->setTitle($product_info['meta_title']);
@@ -446,6 +443,29 @@ class ControllerProductProduct extends Controller {
 					$rating = false;
 				}
 
+                $results_attributes = $this->model_catalog_product->getProductAttributes($result['product_id']);
+
+                $product_attributes = array();
+                if ($results_attributes) {
+                    foreach ($results_attributes as $attr_k => $attr_v) {
+                        if ($attr_v['attribute']) {
+                            foreach ($attr_v['attribute'] as $attr_k2 => $attr_v1) {
+                                if ($attr_v1['image']) {
+                                    $attr_image = $this->model_tool_image->resize($attr_v1['image'], 40, 40);
+                                } else {
+                                    $attr_image = $this->model_tool_image->resize('placeholder.png', 40, 40);
+                                }
+                                $product_attributes[] = [
+                                    'attribute_id' => $attr_v1['attribute_id'],
+                                    'name' => $attr_v1['name'],
+                                    'text' => $attr_v1['text'],
+                                    'image' => $attr_image
+                                ];
+                            }
+                        }
+                    }
+                }
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
@@ -454,6 +474,7 @@ class ControllerProductProduct extends Controller {
 					'price'       => $price,
 					'special'     => $special,
 					'tax'         => $tax,
+                    'product_attributes'   => $product_attributes,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $rating,
 					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])

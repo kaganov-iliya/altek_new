@@ -241,6 +241,14 @@ dropdown-menu.list-language {
     display: block;
     position: relative;
 }
+.breadcrumbs ul li.active {
+    color: #2a3a53;
+    font-family: 'GothamPro-Medium';
+    font-size: 12px;
+    line-height: 30px;
+    display: inline-block;
+    position: relative;
+}
 
 .breadcrumbs ul li a:after {
     content: "\f105";
@@ -553,6 +561,7 @@ span.cod-product {
 .product-thumb .price-new {
     font-family: 'GothamPro-Medium';
     font-size: 21px;
+    font-weight: normal;
     text-align: center;
     color: #393939;
     display: block;
@@ -1001,7 +1010,7 @@ button.buy-onclick-product-card {
     color: #2a3a53;
 }
 .button-group-compare-whitelist {
-    width: 240px;
+    width: 170px;
     margin: auto;
 }
 .button-group-compare-whitelist button {
@@ -1226,6 +1235,17 @@ td.right-td-characteristics {
     display: block;
     width: 100%;
     padding: 15px;
+}
+.image-characteristics {
+    width: 500px;
+    height: 420px;
+    display: inline-block;
+}
+.image-characteristics img {
+    width: 100%;
+    display: block;
+    margin: auto;
+    max-height: 420px;
 }
 .questions-reply-block {
     margin-top: 25px;

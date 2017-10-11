@@ -286,9 +286,9 @@ class ControllerProductCategory extends Controller {
                         if ($attr_v['attribute']) {
                             foreach ($attr_v['attribute'] as $attr_k2 => $attr_v1) {
                                 if ($attr_v1['image']) {
-                                    $attr_image = $this->model_tool_image->resize($attr_v1['image'], 50, 50);
+                                    $attr_image = $this->model_tool_image->resize($attr_v1['image'], 40, 40);
                                 } else {
-                                    $attr_image = $this->model_tool_image->resize('placeholder.png', 50, 50);
+                                    $attr_image = $this->model_tool_image->resize('placeholder.png', 40, 40);
                                 }
                                 $product_attributes[] = [
                                     'attribute_id' => $attr_v1['attribute_id'],
@@ -308,6 +308,7 @@ class ControllerProductCategory extends Controller {
 					'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get('config_product_description_length')) . '..',
 					'price'       => $price,
 					'special'     => $special,
+                    'model'       => $result['model'],
 					'tax'         => $tax,
 					'product_attributes'         => $product_attributes,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,

@@ -25,20 +25,7 @@
                 <?php $class = 'col-sm-12'; ?>
             <?php } ?>
             <div id="content" class="<?php echo $class; ?>"><?php echo $content_top; ?><div id="mfilter-content-container">
-                    <h1><?php echo $heading_title; ?></h1>
-                    <?php if ($description) { ?>
-                        <div class="row">
-                            <?php if ($thumb) { ?>
-                                <div class="col-sm-2"><img src="<?php echo $thumb; ?>" alt="<?php echo $heading_title; ?>" title="<?php echo $heading_title; ?>" class="img-thumbnail" /></div>
-                            <?php } ?>
-                            <?php if ($description) { ?>
-                                <div class="col-sm-10"><?php echo $description; ?></div>
-                            <?php } ?>
-                        </div>
-                        <hr>
-                    <?php } ?>
                     <?php if ($products) { ?>
-                        <p><a href="<?php echo $compare; ?>" id="compare-total"> <?php echo $text_compare; ?></a></p>
                         <div class="row">
                             <div class="col-md-5 select-block-relative">
                                 <label class="control-label label-sort" for="input-sort"><?php echo $text_sort; ?></label>
@@ -53,12 +40,10 @@
                                     <?php } ?>
                                 </select>
                             </div>
-                                <?php echo $search; ?>
-                            <div class="col-md-1 text-right">
-                                <label class="control-label" for="input-limit"><?php echo $text_limit; ?></label>
-                            </div>
-                            <div class="col-md-1 text-right">
-                                <select id="input-limit" class="form-control" onchange="location = this.value;">
+                            <div class="col-md-5 select-block-relative">
+                                <label class="control-label label-sort" for="input-limit"><?php echo $text_limit; ?></label>
+                                <div class="select-arrow-3"></div>
+                                <select id="input-limit" class="form-control select-sort" onchange="location = this.value;">
                                     <?php foreach ($limits as $limits) { ?>
                                         <?php if ($limits['value'] == $limit) { ?>
                                             <option value="<?php echo $limits['href']; ?>" selected="selected"><?php echo $limits['text']; ?></option>
@@ -87,6 +72,9 @@
                                         <div class="image"><a href="<?php echo $product['href']; ?>"><img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" title="<?php echo $product['name']; ?>" class="img-responsive" /></a></div>
                                         <div class="caption">
                                             <h4><a href="<?php echo $product['href']; ?>" class="product-title"><?php echo $product['name']; ?></a></h4>
+                                            <span class="cod-product">
+                                                <?php echo $text_model; ?> <?php echo $product['model']; ?>
+                                            </span>
                                             <?php if ($product['rating']) { ?>
                                                 <div class="rating">
                                                     <?php for ($i = 1; $i <= 5; $i++) { ?>
@@ -119,7 +107,7 @@
                                                     <a href="<?php echo $product['href']; ?>" class="product-title"><?php echo $product['name']; ?></a>
                                                 </h4>
                                               <span class="cod-product">
-                                                    Код: 193284 KH
+                                                    <?php echo $text_model; ?> <?php echo $product['model']; ?>
                                               </span>
                                             </div>
                                             <div class="captain-price-button">
@@ -158,12 +146,14 @@
                                                         <p><?php echo $attr['name']; ?></p>
                                                     </div>
                                                 <?php } ?>
-                                                <?php if($product['special']){ ?>
-                                                    <div class="icon-title-characteristics">
-                                                        <span class="icon-discount"></span>
-                                                        <p>Скидка</p>
-                                                    </div>
-                                                <?php } ?>
+                                            <?php } ?>
+                                            <?php if($product['special']){ ?>
+                                                <div class="icon-title-characteristics">
+                                                     <span>
+                                                            <img class="" src="catalog/view/theme/default/images/attr/promo.png" alt="Скидка" title="Скидка">
+                                                        </span>
+                                                    <p>Скидка</p>
+                                                </div>
                                             <?php } ?>
                                         </div>
                                         <?php $tmp_counter++; ?>

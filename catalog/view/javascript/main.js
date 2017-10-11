@@ -140,4 +140,3 @@ function initMap() {
         'офис 424'
     });
 }
-
